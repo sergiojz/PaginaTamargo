@@ -1,0 +1,1102 @@
+/* ================================================================
+   TAMARGO SANDBLASTING — HOJA DE ESTILOS PRINCIPAL
+   ================================================================
+   Arquitectura CSS:
+     1. Variables (tokens de diseño, modo claro/oscuro)
+     2. Reset y base tipográfica
+     3. Utilidades reutilizables
+     4. Componentes: Header, Hero, Cards, Slider, Footer
+     5. Animaciones y keyframes
+     6. Media queries (Mobile First → Tablet → Desktop)
+   ================================================================ */
+
+
+/* ================================================================
+   1. VARIABLES CSS — TOKENS DE DISEÑO
+   ================================================================
+   Se usan variables CSS para gestionar toda la paleta de colores.
+   Al cambiar el atributo data-theme en <html>, el tema completo
+   se actualiza sin tocar una sola clase.
+   ================================================================ */
+:root {
+  /* — Paleta de marca — */
+  --amarillo:           #F5C518;
+  --amarillo-hover:     #E0B200;
+  --amarillo-suave:     #FFF3CC;
+  --amarillo-glow:      rgba(245, 197, 24, 0.35);
+
+  /* — Tipografía — */
+  --font:               'Outfit', sans-serif;
+  --fs-xs:              0.75rem;
+  --fs-sm:              0.85rem;
+  --fs-base:            1rem;
+  --fs-lg:              1.15rem;
+  --fs-xl:              clamp(2rem, 5vw, 2.8rem);
+  --fs-hero:            clamp(2.4rem, 7vw, 4.2rem);
+
+  /* — Espaciado — */
+  --space-xs:           8px;
+  --space-sm:           16px;
+  --space-md:           24px;
+  --space-lg:           40px;
+  --space-xl:           64px;
+  --space-section:      100px;
+
+  /* — Bordes y radios — */
+  --radius-sm:          8px;
+  --radius-md:          16px;
+  --radius-full:        50px;
+  --radius-circle:      50%;
+
+  /* — Transiciones globales — */
+  --trans-fast:         0.3s ease;
+  --trans-smooth:       0.4s ease;
+  --trans-spring:       0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  --trans-bounce:       0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+}
+
+/* — Tema Claro (por defecto) — */
+[data-theme="light"] {
+  --bg-main:            #FFFFFF;
+  --bg-alt:             #F8F8F5;
+  --bg-card:            #FFFFFF;
+  --bg-card-hover:      #FFFBEA;
+  --bg-nav:             rgba(255, 255, 255, 0.92);
+  --text-primary:       #1A1A1A;
+  --text-secondary:     #555555;
+  --text-muted:         #888888;
+  --border:             #E8E8E0;
+  --border-card:        #F0F0E8;
+  --shadow-card:        0 4px 24px rgba(0, 0, 0, 0.06);
+  --shadow-card-hover:  0 12px 40px rgba(245, 197, 24, 0.15);
+  --shadow-nav:         0 2px 20px rgba(0, 0, 0, 0.06);
+  --hero-overlay:       linear-gradient(135deg, rgba(26,26,26,0.72), rgba(26,26,26,0.45));
+  --footer-bg:          #1A1A1A;
+  --footer-text:        #F0F0E5;
+  --icon-bg:            var(--amarillo-suave);
+  --icon-color:         #B8860B;
+  --slider-track:       rgba(0, 0, 0, 0.08);
+}
+
+/* — Tema Oscuro — */
+[data-theme="dark"] {
+  --bg-main:            #0F0F0F;
+  --bg-alt:             #1A1A1A;
+  --bg-card:            #1E1E1E;
+  --bg-card-hover:      #2A2718;
+  --bg-nav:             rgba(15, 15, 15, 0.94);
+  --text-primary:       #F0F0E5;
+  --text-secondary:     #AAAAAA;
+  --text-muted:         #777777;
+  --border:             #2A2A2A;
+  --border-card:        #333333;
+  --shadow-card:        0 4px 24px rgba(0, 0, 0, 0.3);
+  --shadow-card-hover:  0 12px 40px rgba(245, 197, 24, 0.12);
+  --shadow-nav:         0 2px 20px rgba(0, 0, 0, 0.4);
+  --hero-overlay:       linear-gradient(135deg, rgba(0,0,0,0.80), rgba(0,0,0,0.55));
+  --footer-bg:          #050505;
+  --footer-text:        #D0D0C5;
+  --icon-bg:            rgba(245, 197, 24, 0.12);
+  --icon-color:         var(--amarillo);
+  --slider-track:       rgba(255, 255, 255, 0.08);
+}
+
+
+/* ================================================================
+   2. RESET Y BASE TIPOGRÁFICA
+   ================================================================ */
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 80px;       /* Compensar la altura del header fijo */
+}
+
+body {
+  font-family: var(--font);
+  background-color: var(--bg-main);
+  color: var(--text-primary);
+  line-height: 1.6;
+  overflow-x: hidden;
+  /* Transición suave al cambiar de tema */
+  transition: background-color var(--trans-smooth),
+              color var(--trans-smooth);
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+ul, ol {
+  list-style: none;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+}
+
+
+/* ================================================================
+   3. UTILIDADES REUTILIZABLES
+   ================================================================ */
+
+/* Contenedor centrado con ancho máximo */
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+/* Etiqueta de sección (ej: "MATERIALES Y APLICACIONES") */
+.section-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  font-size: var(--fs-xs);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 2.5px;
+  color: var(--amarillo);
+  margin-bottom: var(--space-sm);
+}
+
+.section-tag::before {
+  content: '';
+  display: inline-block;
+  width: 30px;
+  height: 2px;
+  background: var(--amarillo);
+  border-radius: 2px;
+}
+
+/* Título principal de cada sección */
+.section-title {
+  font-size: var(--fs-xl);
+  font-weight: 800;
+  line-height: 1.15;
+  margin-bottom: var(--space-sm);
+  color: var(--text-primary);
+}
+
+/* Subtítulo descriptivo */
+.section-subtitle {
+  font-size: 1.05rem;
+  color: var(--text-secondary);
+  max-width: 600px;
+  line-height: 1.7;
+}
+
+/* ----------------------------------------------------------------
+   Sistema de animación Scroll Reveal
+   - Cada elemento con .reveal empieza oculto y desplazado.
+   - Al entrar al viewport (via Intersection Observer en JS),
+     recibe .visible y se anima hacia su posición final.
+   ---------------------------------------------------------------- */
+.reveal {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Clases auxiliares para escalonar la aparición de elementos */
+.reveal-delay-1 { transition-delay: 0.1s; }
+.reveal-delay-2 { transition-delay: 0.2s; }
+.reveal-delay-3 { transition-delay: 0.3s; }
+.reveal-delay-4 { transition-delay: 0.4s; }
+.reveal-delay-5 { transition-delay: 0.5s; }
+.reveal-delay-6 { transition-delay: 0.6s; }
+
+
+/* ================================================================
+   4. COMPONENTES
+   ================================================================ */
+
+/* --------------------------------
+   4.1 HEADER / NAVEGACIÓN
+   -------------------------------- */
+.header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+  background: var(--bg-nav);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border-bottom: 1px solid var(--border);
+  box-shadow: var(--shadow-nav);
+  transition: background var(--trans-smooth),
+              box-shadow var(--trans-smooth),
+              border-color var(--trans-smooth);
+}
+
+.header .container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 72px;
+}
+
+/* Logo: imagen + texto */
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-weight: 700;
+  font-size: 1.25rem;
+  color: var(--text-primary);
+  flex-shrink: 0;
+}
+
+.logo img {
+  height: 42px;
+  width: auto;
+  border-radius: 6px;
+}
+
+/* Placeholder visual mientras no hay logo real */
+.logo-placeholder {
+  height: 42px;
+  width: 42px;
+  background: var(--amarillo);
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 900;
+  font-size: 1.1rem;
+  color: #1A1A1A;
+}
+
+/* Menú de navegación (desktop) */
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+}
+
+.nav-links a {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  transition: color var(--trans-fast);
+  position: relative;
+}
+
+/* Subrayado animado en hover */
+.nav-links a::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: var(--amarillo);
+  border-radius: 2px;
+  transition: width var(--trans-fast);
+}
+
+.nav-links a:hover {
+  color: var(--text-primary);
+}
+
+.nav-links a:hover::after {
+  width: 100%;
+}
+
+/* Contenedor de controles de la derecha */
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+/* --------------------------------
+   Toggle de Modo Claro/Oscuro
+   Un botón tipo switch con bolita animada
+   -------------------------------- */
+.theme-toggle {
+  width: 48px;
+  height: 28px;
+  border-radius: 14px;
+  background: var(--slider-track);
+  border: 2px solid var(--border);
+  position: relative;
+  transition: background var(--trans-smooth),
+              border-color var(--trans-smooth);
+  flex-shrink: 0;
+}
+
+/* Bolita del toggle */
+.theme-toggle::before {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 20px;
+  height: 20px;
+  border-radius: var(--radius-circle);
+  background: var(--amarillo);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  transition: transform var(--trans-bounce);
+}
+
+/* En modo oscuro, la bolita se desplaza a la derecha */
+[data-theme="dark"] .theme-toggle::before {
+  transform: translateX(20px);
+}
+
+/* Iconos sol/luna dentro del toggle */
+.theme-toggle-icon {
+  position: absolute;
+  font-size: 0.65rem;
+  top: 50%;
+  transform: translateY(-50%);
+  transition: opacity var(--trans-fast);
+}
+
+.theme-toggle .icon-sun {
+  left: 6px;
+  color: #B8860B;
+  opacity: 1;
+}
+
+.theme-toggle .icon-moon {
+  right: 6px;
+  color: var(--text-muted);
+  opacity: 0.5;
+}
+
+[data-theme="dark"] .theme-toggle .icon-sun  { opacity: 0.4; }
+[data-theme="dark"] .theme-toggle .icon-moon { opacity: 1; color: var(--amarillo); }
+
+/* --------------------------------
+   Botón hamburguesa (solo móvil)
+   -------------------------------- */
+.hamburger {
+  display: none;             /* Oculto en desktop */
+  flex-direction: column;
+  gap: 5px;
+  background: none;
+  border: none;
+  padding: 6px;
+  z-index: 1001;
+}
+
+.hamburger span {
+  display: block;
+  width: 24px;
+  height: 2px;
+  background: var(--text-primary);
+  border-radius: 2px;
+  transition: all 0.35s ease;
+}
+
+/* Animación de la X al abrir el menú */
+.hamburger.active span:nth-child(1) {
+  transform: rotate(45deg) translate(5px, 5px);
+}
+.hamburger.active span:nth-child(2) {
+  opacity: 0;
+}
+.hamburger.active span:nth-child(3) {
+  transform: rotate(-45deg) translate(5px, -5px);
+}
+
+/* Overlay semitransparente detrás del menú móvil */
+.nav-mobile-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 998;
+  opacity: 0;
+  transition: opacity var(--trans-fast);
+}
+
+.nav-mobile-overlay.active {
+  opacity: 1;
+}
+
+
+/* --------------------------------
+   4.2 HERO SECTION
+   -------------------------------- */
+.hero {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: #222;
+}
+
+/* Contenedor de la imagen de fondo */
+.hero-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}
+
+.hero-bg img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Placeholder visual cuando no hay imagen real */
+.hero-bg-placeholder {
+  width: 100%;
+  height: 100%;
+  background:
+    radial-gradient(ellipse at 30% 50%, rgba(245, 197, 24, 0.15) 0%, transparent 60%),
+    radial-gradient(ellipse at 70% 30%, rgba(245, 197, 24, 0.08) 0%, transparent 50%),
+    linear-gradient(160deg, #2A2A2A 0%, #1A1A1A 50%, #111 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hero-bg-placeholder::after {
+  content: '📷 Reemplazar con imagen del Hero → assets/img/hero-bg.jpg';
+  color: rgba(255, 255, 255, 0.18);
+  font-size: 0.9rem;
+  font-weight: 500;
+  text-align: center;
+  padding: 0 20px;
+}
+
+/* Capa de oscurecimiento sobre la imagen */
+.hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: var(--hero-overlay);
+  z-index: 2;
+}
+
+/* Contenido del hero (texto + CTA) */
+.hero-content {
+  position: relative;
+  z-index: 3;
+  text-align: center;
+  padding: 0 20px;
+  max-width: 800px;
+}
+
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: 8px 20px;
+  background: rgba(245, 197, 24, 0.12);
+  border: 1px solid rgba(245, 197, 24, 0.3);
+  border-radius: var(--radius-full);
+  font-size: var(--fs-xs);
+  font-weight: 600;
+  color: var(--amarillo);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-bottom: 28px;
+  animation: heroFadeDown 1s 0.2s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.hero-title {
+  font-size: var(--fs-hero);
+  font-weight: 900;
+  color: #FFFFFF;
+  line-height: 1.08;
+  margin-bottom: 20px;
+  animation: heroFadeUp 1s 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* Acentuación en amarillo */
+.hero-title .highlight {
+  color: var(--amarillo);
+}
+
+.hero-subtitle {
+  font-size: clamp(1rem, 2.5vw, 1.2rem);
+  font-weight: 300;
+  color: rgba(255, 255, 255, 0.75);
+  max-width: 580px;
+  margin: 0 auto var(--space-lg);
+  line-height: 1.7;
+  animation: heroFadeUp 1s 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* Botón CTA principal */
+.hero-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  padding: 18px 42px;
+  background: var(--amarillo);
+  color: #1A1A1A;
+  font-size: 1.05rem;
+  font-weight: 700;
+  font-family: var(--font);
+  border-radius: var(--radius-full);
+  border: none;
+  transition: transform var(--trans-fast),
+              box-shadow var(--trans-fast),
+              background var(--trans-fast);
+  box-shadow: 0 6px 30px var(--amarillo-glow);
+  animation: heroFadeUp 1s 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.hero-cta:hover {
+  transform: translateY(-3px) scale(1.03);
+  box-shadow: 0 10px 45px var(--amarillo-glow);
+  background: var(--amarillo-hover);
+}
+
+.hero-cta:active {
+  transform: translateY(0) scale(0.98);
+}
+
+.hero-cta i {
+  font-size: 1.1rem;
+  animation: phonePulse 2s infinite;
+}
+
+/* Indicador visual de scroll (flechita animada) */
+.hero-scroll {
+  position: absolute;
+  bottom: 32px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-xs);
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  animation: heroFadeUp 1s 1.2s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.hero-scroll-line {
+  width: 1px;
+  height: 40px;
+  background: linear-gradient(to bottom, var(--amarillo), transparent);
+  animation: scrollPulse 2s ease-in-out infinite;
+}
+
+/* Partículas decorativas flotantes (generadas por JS) */
+.hero-particles {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.particle {
+  position: absolute;
+  width: 3px;
+  height: 3px;
+  background: var(--amarillo);
+  border-radius: var(--radius-circle);
+  opacity: 0;
+  animation: particleFloat linear infinite;
+}
+
+
+/* --------------------------------
+   4.3 SECCIÓN MATERIALES / APLICACIONES
+   -------------------------------- */
+.section-materiales {
+  padding: var(--space-section) 0;
+  background: var(--bg-alt);
+  transition: background var(--trans-smooth);
+}
+
+.materiales-header {
+  text-align: center;
+  margin-bottom: var(--space-xl);
+}
+
+.materiales-header .section-subtitle {
+  margin: 0 auto;
+}
+
+/* Grid de tarjetas */
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: var(--space-md);
+}
+
+/* Tarjeta individual */
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-card);
+  border-radius: var(--radius-md);
+  padding: 36px 28px;
+  text-align: center;
+  box-shadow: var(--shadow-card);
+  transition: all var(--trans-spring);
+}
+
+.card:hover {
+  transform: translateY(-8px);
+  box-shadow: var(--shadow-card-hover);
+  border-color: rgba(245, 197, 24, 0.3);
+  background: var(--bg-card-hover);
+}
+
+/* Icono dentro de la tarjeta */
+.card-icon {
+  width: 64px;
+  height: 64px;
+  margin: 0 auto 20px;
+  background: var(--icon-bg);
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  color: var(--icon-color);
+  transition: transform var(--trans-smooth),
+              background var(--trans-smooth);
+}
+
+.card:hover .card-icon {
+  transform: scale(1.1) rotate(-5deg);
+  background: var(--amarillo);
+  color: #1A1A1A;
+}
+
+.card-title {
+  font-size: var(--fs-lg);
+  font-weight: 700;
+  margin-bottom: 10px;
+  color: var(--text-primary);
+}
+
+.card-text {
+  font-size: 0.92rem;
+  color: var(--text-secondary);
+  line-height: 1.65;
+}
+
+
+/* --------------------------------
+   4.4 GALERÍA ANTES / DESPUÉS
+   -------------------------------- */
+.section-galeria {
+  padding: var(--space-section) 0;
+  background: var(--bg-main);
+  transition: background var(--trans-smooth);
+}
+
+.galeria-header {
+  text-align: center;
+  margin-bottom: var(--space-xl);
+}
+
+.galeria-header .section-subtitle {
+  margin: 0 auto;
+}
+
+/* Grid de sliders comparativos */
+.sliders-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+  gap: 32px;
+}
+
+/* --------------------------------
+   Componente: Slider Comparativo
+   El slider usa clip-path para revelar
+   la imagen "después" sobre la "antes".
+   -------------------------------- */
+.comparison-slider {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  cursor: ew-resize;
+  box-shadow: var(--shadow-card);
+  border: 1px solid var(--border-card);
+  user-select: none;
+  -webkit-user-select: none;
+  background: #1a1a1a;
+}
+
+.comparison-slider .img-wrapper {
+  position: absolute;
+  inset: 0;
+}
+
+.comparison-slider .img-wrapper img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center center;
+}
+
+/* Placeholders visuales para las imágenes del slider */
+.slider-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-xs);
+  font-size: var(--fs-sm);
+  font-weight: 500;
+}
+
+.slider-placeholder i {
+  font-size: 2rem;
+  opacity: 0.4;
+}
+
+/* Placeholder "Antes" — Tonos oscuros/oxidados */
+.img-antes .slider-placeholder {
+  background: linear-gradient(135deg, #8B4513 0%, #A0522D 50%, #6B3410 100%);
+  color: rgba(255, 255, 255, 0.5);
+}
+
+/* Placeholder "Después" — Tonos amarillo/dorado */
+.img-despues .slider-placeholder {
+  background: linear-gradient(135deg, #DAA520 0%, #F5C518 50%, #FFD700 100%);
+  color: rgba(26, 26, 26, 0.5);
+}
+
+/* Capas de imagen */
+.comparison-slider .img-antes { z-index: 1; }
+
+.comparison-slider .img-despues {
+  z-index: 2;
+  clip-path: inset(0 0 0 50%);     /* Revela desde el 50% inicial */
+}
+
+/* Línea divisoria central */
+.slider-handle {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 3px;
+  background: #FFFFFF;
+  z-index: 3;
+  transform: translateX(-50%);
+  box-shadow: 0 0 12px rgba(0, 0, 0, 0.3);
+}
+
+/* Botón circular del controlador */
+.slider-handle::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 44px;
+  height: 44px;
+  background: #FFFFFF;
+  border-radius: var(--radius-circle);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.25);
+}
+
+/* Icono de flechas dentro del controlador */
+.slider-handle::after {
+  content: '\f337';                 /* Font Awesome: arrows-left-right */
+  font-family: 'Font Awesome 6 Free';
+  font-weight: 900;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 1rem;
+  color: #1A1A1A;
+  z-index: 4;
+}
+
+/* Etiquetas "ANTES" / "DESPUÉS" */
+.slider-label {
+  position: absolute;
+  bottom: 16px;
+  padding: 6px 16px;
+  border-radius: var(--radius-sm);
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  z-index: 5;
+  pointer-events: none;
+}
+
+.slider-label-antes {
+  left: 16px;
+  background: rgba(0, 0, 0, 0.65);
+  color: #FFFFFF;
+  backdrop-filter: blur(4px);
+}
+
+.slider-label-despues {
+  right: 16px;
+  background: rgba(245, 197, 24, 0.9);
+  color: #1A1A1A;
+}
+
+/* Texto descriptivo debajo de cada slider */
+.slider-caption {
+  text-align: center;
+  margin-top: var(--space-sm);
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+
+/* --------------------------------
+   4.5 FOOTER / CONTACTO
+   -------------------------------- */
+.footer {
+  background: var(--footer-bg);
+  color: var(--footer-text);
+  padding: 80px 0 40px;
+  text-align: center;
+  transition: background var(--trans-smooth);
+}
+
+.footer-ubicacion {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  color: var(--amarillo);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 20px;
+}
+
+.footer-title {
+  font-size: clamp(1.6rem, 4vw, 2.4rem);
+  font-weight: 800;
+  margin-bottom: 12px;
+  color: #FFFFFF;
+}
+
+.footer-subtitle {
+  font-size: var(--fs-base);
+  color: rgba(240, 240, 229, 0.55);
+  margin-bottom: var(--space-lg);
+  max-width: 500px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Número de teléfono grande y clickeable */
+.footer-phone {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-sm);
+  font-size: clamp(1.8rem, 5vw, 3rem);
+  font-weight: 900;
+  color: var(--amarillo);
+  transition: transform var(--trans-fast),
+              text-shadow var(--trans-fast);
+  margin-bottom: var(--space-sm);
+}
+
+.footer-phone:hover {
+  transform: scale(1.05);
+  text-shadow: 0 0 30px var(--amarillo-glow);
+}
+
+.footer-phone i {
+  font-size: 0.8em;
+  animation: phonePulse 2s infinite;
+}
+
+.footer-phone-hint {
+  font-size: var(--fs-sm);
+  color: rgba(240, 240, 229, 0.4);
+  margin-bottom: 60px;
+}
+
+.footer-divider {
+  width: 80px;
+  height: 2px;
+  background: rgba(245, 197, 24, 0.2);
+  margin: 0 auto var(--space-md);
+  border-radius: 2px;
+}
+
+.footer-copy {
+  font-size: var(--fs-xs);
+  color: rgba(240, 240, 229, 0.3);
+}
+
+
+/* ================================================================
+   5. ANIMACIONES Y KEYFRAMES
+   ================================================================ */
+
+/* Hero: Elementos bajan desde arriba */
+@keyframes heroFadeDown {
+  from { opacity: 0; transform: translateY(-30px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Hero: Elementos suben desde abajo */
+@keyframes heroFadeUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Icono de teléfono vibrando */
+@keyframes phonePulse {
+  0%, 100% { transform: rotate(0deg); }
+  10%      { transform: rotate(12deg); }
+  20%      { transform: rotate(-8deg); }
+  30%      { transform: rotate(6deg); }
+  40%      { transform: rotate(0deg); }
+}
+
+/* Línea de scroll pulsando */
+@keyframes scrollPulse {
+  0%, 100% { opacity: 0.4; transform: scaleY(1); }
+  50%      { opacity: 1;   transform: scaleY(1.3); }
+}
+
+/* Partículas flotando de abajo hacia arriba */
+@keyframes particleFloat {
+  0%   { opacity: 0; transform: translateY(100vh) scale(0); }
+  10%  { opacity: 0.6; }
+  90%  { opacity: 0.6; }
+  100% { opacity: 0; transform: translateY(-100px) scale(1); }
+}
+
+
+/* ================================================================
+   6. MEDIA QUERIES — RESPONSIVE (Mobile First)
+   ================================================================ */
+
+/* ---------- Móviles pequeños (≤ 420px) ---------- */
+@media (max-width: 420px) {
+  .cards-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ---------- Móviles y tablets pequeñas (≤ 480px) ---------- */
+@media (max-width: 480px) {
+  .sliders-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .hero-cta {
+    padding: 16px 32px;
+    font-size: 0.95rem;
+  }
+
+  .section-materiales,
+  .section-galeria {
+    padding: 72px 0;
+  }
+}
+
+/* ---------- Tablets (≤ 768px) ---------- */
+@media (max-width: 768px) {
+  /* Cards se muestran en 2 columnas */
+  .cards-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-sm);
+  }
+
+  .card {
+    padding: 24px 18px;
+  }
+
+  .card-icon {
+    width: 52px;
+    height: 52px;
+    font-size: 1.2rem;
+  }
+
+  .card-title {
+    font-size: var(--fs-base);
+  }
+
+  .card-text {
+    font-size: 0.82rem;
+  }
+
+  /* Sliders en 1 columna centrada */
+  .sliders-grid {
+    grid-template-columns: 1fr;
+    max-width: 500px;
+    margin: 0 auto;
+  }
+
+  /* Menú lateral en móvil */
+  .nav-links {
+    position: fixed;
+    top: 0;
+    right: -100%;
+    width: 280px;
+    height: 100vh;
+    background: var(--bg-main);
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 100px 32px 40px;
+    gap: var(--space-md);
+    box-shadow: -4px 0 30px rgba(0, 0, 0, 0.12);
+    transition: right var(--trans-spring),
+                background var(--trans-smooth);
+    z-index: 999;
+  }
+
+  .nav-links.open {
+    right: 0;
+  }
+
+  .nav-links a {
+    font-size: 1.1rem;
+  }
+
+  /* Mostrar hamburguesa y overlay */
+  .nav-mobile-overlay {
+    display: block;
+    pointer-events: none;
+  }
+
+  .nav-mobile-overlay.active {
+    pointer-events: all;
+  }
+
+  .hamburger {
+    display: flex;
+  }
+}
